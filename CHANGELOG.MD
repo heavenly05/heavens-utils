@@ -8,4 +8,4 @@
 ### - Fixed missing import for getJSONFile in ```ServerUtils.js```
 
 # [1.1.3] Jun 3 2025
-### - Enabled fucntionality to pass in a paramater to actions in HOption.```Utils.js```
+### - Enabled fucntionality to pass in a paramater to actions for HOptions in ```Utils.js```
