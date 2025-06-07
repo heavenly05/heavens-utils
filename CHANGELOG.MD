@@ -13,3 +13,5 @@
 # [1.1.4] Jun 3 2025
 ### - Enabled fucntionality for actions to return a value from the ```performAction``` method <br> - Revised JDoc For some HOption methods
 
+# [1.1.5] Jun 7 2025
+### - Added getOptionCount method for HOptionnterface in ```Utils.js```. <br> - Fixed getOption method fo HOptionInterface in ```Utils.js```.<br> - Updated the JDOC of HOption getOption method in ```Utils.js```. <br> - Fixed the JDOC of ListDirectoriesWithPaths in ```ServerUtils.js```.<br> - Updated the getOptions method for HOptionInterface in ```Utils.js``` to filter out objects that are not HOptions.
