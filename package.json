@@ -17,7 +17,9 @@
     "js",
     "nodejs",
     "Utils",
-    "fullstack"
+    "fullstack",
+    "noejs",
+    "browser"
   ],
   "type": "module",
   "author": "Heaven",
