@@ -1271,6 +1271,7 @@ export class HOptionListInterface{
      */
     getOption(index){
         if(!(Number.isInteger(index))) throw new Error("index must be a number")
+            console.log(this.#list[index])
         return this.#list[index]
     }
 
@@ -1387,7 +1388,7 @@ export class HOptionList{
      */
     getOption(index){
         if(!(Number.isInteger(index))) throw new Error("index must be a number")
-        this.#HOptionInterface.getOption(index)
+        return this.#HOptionInterface.getOption(index)
     }
 
     /**

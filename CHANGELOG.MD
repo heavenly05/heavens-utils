@@ -15,3 +15,6 @@
 
 # [1.1.5] Jun 7 2025
 ### - Added getOptionCount method for HOptionnterface in ```Utils.js```. <br> - Fixed getOption method fo HOptionInterface in ```Utils.js```.<br> - Updated the JDOC of HOption getOption method in ```Utils.js```. <br> - Fixed the JDOC of ListDirectoriesWithPaths in ```ServerUtils.js```.<br> - Updated the getOptions method for HOptionInterface in ```Utils.js``` to filter out objects that are not HOptions.
+
+# [1.1.6] Jun 7 2025
+### - Fixed getOption method in HOptionList in ```Utils.js```
