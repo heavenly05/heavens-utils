@@ -15,4 +15,8 @@
 # Extra
 [GitHub Repository (link)](https://github.com/heavenly05/heavens-utils.git)
 
+[npm package (link)](https://www.npmjs.com/package/heavens-utils)
+
 Email: heaventhsaltacc@gmail.com
+
+
