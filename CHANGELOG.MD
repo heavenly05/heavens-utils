@@ -21,3 +21,9 @@
 
 # [1.1.7] Jun 7 2025
 ### - Fixed getOption method logging out tot he conole in HOtionListInterfacein ```Utils.js```<br>- Fixed channelog refereing to the wrong name, HOptionInterface instead of HOptionListInterface
+
+# [1.1.8] Jun 7 2025
+### Revision for the last update
+
+# [1.1.9] Jun 28 2025
+### -Fixed bug occuring inside of copyfile (```Serverutils.js```) causing erors to be thrown when copying a file that has no file extension <br><br>-Added many new Functions, Data structures and Classes to ```Utils.js```.<br><br>- Added new methods to ```ServerUtils.js```.

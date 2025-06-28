@@ -1403,5 +1403,738 @@ export class HOptionList{
 }
 
 
+export function sayHello(name){
+    console.log("hello, " + name + "!")
+}
+
+
+//define your utilities here
+
+/**
+ * returns the greatest common factor among an array of numbers.
+ * @param {number[]} list1
+ * @param {...number} list2 
+ * 
+ * @returns {number}
+ */
+export function getGCF(list1 , ...list2){
+    if(!Array.isArray(list1)) throw new Error("List must be an array")
+    list1 = list1.filter(v => Number.isInteger(v))
+    list2 = list2.filter(v => Number.isInteger(v))
+    let full_list = Utils.joinArrs(list1, list2).sort((a,b) => a - b)
+
+    for(let i = full_list[0]; i > 0; i--){
+        if(full_list.every(v => Number.isInteger(v / i))) return i
+    }
+}
+
+/**
+ * Applies the greatest common factor among an array of numbers. divides the numbers by their gcf and returns the array
+ * @param {number[]} list1
+ * @param {...number} list2 
+ * 
+ * @returns {number[]}
+ */
+export function applyGCF(list1 , ...list2){
+if(!Array.isArray(list1)) throw new Error("List must be an array")
+    list1 = list1.filter(v => Number.isInteger(v))
+    list2 = list2.filter(v => Number.isInteger(v))
+    return Utils.joinArrs(list1, list2).map((v, i, a) => (v / getGCF(a)))
+}
+
+/**
+ * returns the decimal part of a number
+ * @param {number} number
+ * @returns {number}
+ */
+export function getDecimal(number){
+    if(typeof number != 'number') throw new Error("number must be a number")
+
+    number = ((Number.isInteger(number)) ? number.toFixed(1) : number).toString()
+    return parseInt(number.slice(number.lastIndexOf(".") + 1))
+
+}
+
+/**
+ * Converts a value to a NDC (Normal Device Coordinate) baxed on the minimum and max value
+ * @param {number} value 
+ * @param {number} max 
+ * @param {number} min 
+ * 
+ * @returns {number}
+ */
+export function valueToNDC(value, max, min){
+    if(typeof value != "number") throw new Error("value must be a number")
+    if(typeof max != "number") throw new Error("max must be a number")
+    if(typeof min != "number") throw new Error("min must be a number")
+    return ((value)  / (max - min))
+}
+
+/**
+ * Converts  a NDC (Normal Device Coordinate) into a normal number based on minimum and max.
+ * @param {number} value 
+ * @param {number} max 
+ * @param {number} min 
+ * 
+ * @returns {number}
+ */
+export function NDCToValue(value, max, min){
+    if(typeof value != "number") throw new Error("value must be a number")
+    if(typeof max != "number") throw new Error("max must be a number")
+    if(typeof min != "number") throw new Error("min must be a number")
+    
+    return (value * (max - min))
+}
+
+/**
+ * converts a number into a percentage of another number
+ * @param {number} value 
+ * @param {number} total
+ */
+export function valueToPercent(value, total){
+    if(typeof value != "number") throw new Error("value must be an number.")
+    if(typeof total != "number") throw new Error("total must be an number.")
+
+    return (value / total)
+}
+
+/**
+ * converts a percentage of another number into a value
+ * @param {number} percent
+ * @param {number} total 
+ */
+export function percentToValue(percent, total){
+    if(typeof value != "number") throw new Error("value must be an number.")
+    if(typeof total != "number") throw new Error("total must be an number.")
+    
+    return (percent * total)
+}
+
+// export class Vec
+
+export class Vector2DWrapperClass{
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    constructor(x,y){
+        this.#vector_interface = new Vector2DInterface(x,y)
+    }
+
+    #vector_interface
+    /**
+     * 
+     * @returns {Vector2DInterface}
+     */
+    getInterface(){
+        return this.#vector_interface
+    }
+
+    toString(){
+        return this.getInterface().toString()
+    }
+
+     /** 
+    * @param {Vector2DWrapperClass} vector1
+    * @param {Vector2DWrapperClass} vector2
+    * 
+    * @returns {Vector2DWrapperClass}
+    */
+    static combineVectors(vector1, vector2){
+        if(!(vector1 instanceof Vector2DWrapperClass)) throw new Error("vector1 must be a Vector2DWrapperClass object")
+
+        if(!(vector2 instanceof Vector2DWrapperClass)) throw new Error("vector2 must be a Vector2DWrapperClass object")
+
+        return new Vector2DWrapperClass(vector1.#vector_interface.getX() + vector2.#vector_interface.getX(), vector2.#vector_interface.getY() + vector1.#vector_interface.getY())
+    }
+}
+
+export class Dimension2D extends Vector2DWrapperClass{
+
+    /**
+     * 
+     * @param {number} width 
+     * @param {number} height 
+     */
+    constructor(width, height){
+        super(width,height)
+    }
+/**
+     * 
+     * @returns {number}
+     */
+    getWidth(){
+        return this.getInterface().getX()
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getHeight(){
+        return this.getInterface().getY()
+    }
+
+    /**
+     * 
+     * @param {number} v 
+     */
+    setWidth(v){
+        this.getInterface().setX(v)
+    }
+    /**
+     * 
+     * @param {number} v 
+     */
+    setHeight(v){
+        this.getInterface().setY(v)
+    }
+
+    /**
+     * 
+     * @param {Vector2DWrapperClass} vector_wrapper 
+     * @returns { Dimension2D }
+     */
+    static parseDimension2D(vector_wrapper){
+        if(!(vector_wrapper instanceof Vector2DWrapperClass)) throw new Error("vector_wrapper must be an instance of Vector2DWrapperClass")
+
+        return new Dimension2D(vector_wrapper.getInterface().getX(), vector_wrapper.getInterface().getY())
+    }
+
+}
+
+export class Vector2D extends Vector2DWrapperClass{
+
+     /**
+     * 
+     * @param {number} width 
+     * @param {number} height 
+     */
+    constructor(width, height){
+        super(width,height)
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getX(){
+        return this.getInterface().getX()
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getY(){
+        return this.getInterface().getY()
+    }
+
+    /**
+     * 
+     * @param {number} v 
+     */
+    setX(v){
+        this.getInterface().setX(v)
+    }
+    /**
+     * 
+     * @param {number} v 
+     */
+    setY(v){
+        this.getInterface().setY(v)
+    }
+
+    /**
+     * 
+     * @param {Vector2DWrapperClass} vector_wrapper 
+     * @returns { Vector2D }
+     */
+    static parseVector2D(vector_wrapper){
+        if(!(vector_wrapper instanceof Vector2DWrapperClass)) throw new Error("vector_wrapper must be an instance of Vector2DWrapperClass")
+
+        return new Vector2D(vector_wrapper.getInterface().getX(), vector_wrapper.getInterface().getY())
+    }
+}
+
+export class Vector2DInterface{
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    constructor(x ,y){
+        if(typeof x != "number" && x != undefined) throw new Error("x must be a number")
+        if(typeof y != "number" && y != undefined) throw new Error("y must be a number")
+
+        this.#x_value = (x == undefined) ? 0 : x
+        this.#y_value = (y == undefined) ? 0 : y
+    }
+
+    #x_value
+    #y_value
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getX(){
+        return this.#x_value
+    }
+    
+    /**
+     * retuns the yValue of this vector
+     * @returns {number}
+     */
+    getY(){
+        return this.#y_value
+    }
+
+    /**
+     * 
+     * @param {number} x 
+     */
+    setX(x){
+        if(typeof x != "number") throw new Error("x must be a number")
+        this.#x_value = x
+    }
+
+    /**
+     * 
+     * @param {number} y 
+     */
+    setY(y){
+        if(typeof y != "number") throw new Error("y must be a number")
+        this.#y_value = y
+    }
+
+    /**
+     * 
+     * @returns {[]}
+     */
+    toArr(){
+        return [this.getX(),this.getY()]
+    }
+
+    
+    /**
+     * stringifys the content in [(x) x (y)] format
+     * @returns {string}
+     */
+    toString(){
+        return `${this.getX()} x ${this.getY()}`
+    }
+
+    
+}
+
+
+export class RGB{
+    /**
+     * Creates an RGB object to represent the specific color values of pixels on a screen. if a value is less than zero or undefined it will be defaulted to 0. If a value is greater than 255 it will scale back down to 255.
+     * @param {number | undefined} red 
+     * @param {number | undefined} green 
+     * @param {number | undefined} blue 
+     */
+    constructor(red, green, blue){
+        if(typeof red != "number" && red != undefined) throw new Error("Red must be an number!")
+
+        if(typeof green != "number" && green != undefined) throw new Error("Green must be an number!")
+
+        if(typeof blue != "number" && blue != undefined) throw new Error("Blue must be an number!")
+
+        this.#colors = [(red == undefined || red < 0) ? 0 : (red > 255) ? 255 : red ,(green == undefined || green < 0) ? 0 : (green > 255) ? 255 : green , (blue == undefined || blue < 0) ? 0 : (blue > 255) ? 255 : blue]
+
+    }
+
+    #colors = []
+
+    /**
+     * returns the rgb value of the red color
+     * @returns {number}
+     */
+    getRed(){
+        return this.#colors[0]
+    }
+
+     /**
+     * returns the rgb value of the green color
+     * @returns {number}
+     */
+    getGreen(){
+        return this.#colors[1]
+    }
+
+    /**
+     * returns the rgb value of the blue color
+     * @returns {number}
+     */
+    getBlue(){
+        return this.#colors[2]
+    }
+
+    /**
+     * sets the rgb value of the red color
+     * @param {number} val
+     */
+    setRed(val){
+        this.#colors[0] = ((val == undefined || val < 0) ? 0 : (val > 255) ? 255 : val)
+    }
+
+    /**
+     * sets the rgb value of the green color
+     * @param {number} val
+     */
+    setGreen(val){
+        this.#colors[1] = ((val == undefined || val < 0) ? 0 : (val > 255) ? 255 : val)
+    }
+
+    /**
+     * sets the rgb value of the blue color
+     * @param {number} val
+     */
+    setBlue(val){
+        this.#colors[2] = ((val == undefined || val < 0) ? 0 : (val > 255) ? 255 : val)
+    }
+
+    /**
+     * returns a representaion of the rgb in object notation
+     * @returns {{red : number, green : number, blue : number}}
+     */
+    getColorOBJ(){
+        return {
+            red : this.getRed(),
+            green : this.getGreen(),
+            blue : this.getBlue()
+        }
+    }
+
+    /**
+     * returns an array containing the RGB values
+     * @returns {number[3]}
+     */
+    getColorArr(){
+        return this.#colors
+    }
+
+    /**
+     * formats the rbg into proper notation
+     * @returns {string}
+     */
+    formatToString(){
+        return `rgb(${this.getRed()},${this.getGreen()},${this.getBlue()})`
+    }
+
+    /**
+     * parses an object or array into a RGB instance. does not check for undefined values. if any rgb value is undefined it will default to zero.
+     * 
+     * @param {number[3] | { red : number, green : number, blue : number}} object 
+     * @returns 
+     */
+   static parseRGB(object){
+        if(Array.isArray(object)){
+            return new RGB(object[0], object[1], object[2])
+        }else if(typeof object == "object"){
+            return new RGB(object["red"], object["green"], object["blue"])
+        }
+
+        throw new Error("RGB must be an array or object")
+        
+    }
+
+}
+
+
+
+export class Rectangle{
+    /**
+     * 
+     * @param {Vector2D} position 
+     * @param {Dimension2D} dimension 
+     * @param {RGB} color 
+     */
+    constructor(position, dimension, color){
+        if(!(position instanceof Vector2D)) throw new Error("position must be a Vector2D")
+
+        if(!(dimension instanceof Dimension2D)) throw new Error("dimensionb must be a Dimension2D")
+        
+        this.#position = position
+        this.#dimension = dimension
+        this.#color = (color) ? color : new RGB()
+    }
+
+    #position
+    #dimension
+    #color
+
+
+    /**
+     * 
+     * @returns {Vector2D}
+     */
+    getPosition(){
+        return this.#position
+    }
+
+    /**
+     * 
+     * @returns {Dimension2D}
+     */
+    getDimensions(){
+        return this.#dimension
+    }
+
+    /**
+     * 
+     * @returns {RGB}
+     */
+    getRGB(){
+        return this.#color
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getX(){
+        return this.#position.getX()
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getY(){
+        return this.#position.getY()
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getWidth(){
+        return this.#dimension.getWidth()
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    getHeight(){
+        return this.#dimension.getHeight()
+    }
+
+    /**
+     * 
+     * @param {Vector2D} position 
+     */
+    setPosition(position){
+        if(!(position instanceof Vector2D)) throw new Error("position must be a Vector2D")
+
+        this.#position = position
+    }
+
+    /**
+     * sets the x position
+     * @param {number} value 
+     */
+    setX(value){
+        this.#position.setX(value)
+    }
+
+    /**
+     * sets the y position
+     * @param {number} value 
+     */
+    setY(value){
+        this.#position.setY(value)
+    }
+
+    /**
+     * sets the width
+     * @param {number} value 
+     */
+    setWidth(value){
+        this.getDimensions().setWidth(value)
+    }
+
+    /**
+     * sets the height
+     * @param {number} value 
+     */
+    setHeight(value){
+        this.getDimensions().setHeight(value)
+    }
+
+
+    /**
+     * 
+     * @param {Dimension2D} dimension 
+     */
+    setDimensions(dimension){
+        if(!(dimension instanceof Dimension2D)) throw new Error("dimensionb must be a Dimension2D")
+
+        this.#dimension = dimension
+    }
+
+    /**
+     * 
+     * @param {RGB} color 
+     */
+    setRGB(color){
+        this.#color = color
+    }
+
+    /**
+     * 
+     * @param {number} value 
+     */
+    increaseX(value){
+        this.#position.setX(this.#position.getX() + value)
+    }
+
+    /**
+     * 
+     * @param {number} value 
+     */
+    increaseY(value){
+        this.#position.setX(this.#position.getX() + value)
+    }
+
+    /**
+     * 
+     * @param {number} value 
+     */
+    increaseY(value){
+        this.#position.setY(this.#position.getY() + value)
+    }
+
+    /**
+     * 
+     * @param {number} value 
+     */
+    increaseHeight(value){
+        this.#dimension.setHeight(this.#dimension.getHeight() + value)
+    }
+
+    /**
+     * 
+     * @param {number} value 
+     */
+    increaseWidth(value){
+        this.#dimension.setWidth(this.#dimension.getWidth() + value)
+    }
+
+
+
+    
+
+    /**
+     * returns a boolean value based on whether this rectangle is intersecting another rectangle
+     * @param {Rectangle} rect
+     * @returns { boolean }
+     */
+    localIntersectsWith(rect){
+        return Rectangle.intersectsWith(this, rect)
+    }
+
+    /**
+     * returns a boolean value based on whether this rectangle is intersecting another rectangle
+     * @param {Rectangle} rect1
+     * @param {Rectangle} rect2
+     * @returns { boolean }
+     */
+    static intersectsWith(rect1, rect2){
+        if(!(rect1 instanceof Rectangle)) throw new Error("Rect1 must be a rectanlge")
+
+        if(!(rect2 instanceof Rectangle)) throw new Error("Rect2 must be a rectanlge")
+        
+        const right_side_of_rect = (rect2.getX() + rect2.getWidth())
+
+        const bottom_of_rect = (rect2.getY() + rect2.getHeight())
+        
+        //if either of the sides are within the same x values
+       
+
+        if((rect1.getX() <= right_side_of_rect) && (rect1.getX() + rect1.getWidth()) >= rect2.getX()&& (rect1.getY() + rect1.getHeight()) >= rect2.getY() && (rect1.getY()) <= rect2.getY() + rect2.getHeight()){
+            return true
+        }
+        
+        return false
+    }
+}
+
+/**
+ * handles a client request date, if it is not in a json format it will throw na error.
+ * @param {http.IncomingMessage} req 
+ * @returns {{} | null}
+ */
+export async function handleClientRequestData(req){
+    
+    try {
+        return await Server_Utils.handleClientData(req)
+    } catch (error) {
+        return null
+    }
+}
+
+/**
+ * sorts through an array of strings by comparing them one by one againt each other until the array is sorted.
+ * @param {string[]} arr 
+ * @param {boolean} [ascending=false] 
+ */
+export function bubble_sort_strings(arr, ascending = false){
+    if(!Array.isArray(arr)) throw new Error("arr is not an Array")
+    if(typeof ascending != "boolean") throw new Error("ascending must be a boolean")
+    let temp = arr.filter(v => typeof v == "string")
+
+    arr = temp.map((v, i) => {
+
+        //first turns every string in the array into a array of string
+
+        //then it goes overy every letter in the array turning it into a a character code
+
+        //ex: heaven - ["h", "e", "a", "v", "e", "n"] -> [1 ,2 ,3 ,3 , 5, 5...]
+
+        //it then multiplies the character code by the index of the letter in the array, if the index is 0 it transforms to 1.
+
+        
+
+        //the character codes are then added together to give you one unique value for the string
+
+        //we then attempt to shrink the numbers by each dividing by the gcf of all the numbers, if there is one, if there isnt the array will not be affected.
+        return stringToUniqueNumber(v)
+    })
+    //we then sort the array with bubble sort and rematch all values based on the character code total. 
+    arr = Utils.applyGCF(arr)
+
+
+
+    arr = bubble_sort_numbers(arr, ascending).map(v => v.toString())
+
+    temp.forEach((v, i) => {
+        let id = stringToUniqueNumber(v).toString()
+         arr[arr.lastIndexOf(id)] = v
+    })
+
+    return arr
+    
+     
+
+
+    
+}
+
+/**
+ * Turns a string into a unique number by converting it into an array, he it converts every letter into its corresponding character code . It then multiplies that character code by its position in the created array. the greatest common factor of the string is found and if there is one then every number will be divided by it to keep the numbers low. Then the rray of characters will eb added up together to return the final value/ 
+ * @param {string} subject 
+ * @returns {number}
+ */
+function stringToUniqueNumber(subject){
+    if(typeof subject != "string") throw new Error("subject must be a string")
+    return Utils.applyGCF(Utils.stringToArray(subject).map((p, m) => (p.charCodeAt(0) * ((m == 0 ) ? 1 : m )))).reduce((acc,curr) => acc += curr, 0)
+}
+
 export {asciiRange, generateRandomArr, generateRandomMixedString, generateRandomNumber,generateRandomString,return_sum, getDate, INode, INodeList, charCodeArrToChar, secondsToString,indexArrN, joinArrs,decimalToBinary, decArrToBinArr,arraysHaveSameContent, multipleArraysHaveSameContent,countOccurences, joinArrayOfArrays, InstanceWrapper, stringToArray, stringToByte, JSONToByte, anyToByte, byteToChar,bytesToString,byteArrToChars,  arrToBytes, arrayToNumArray, viewToArr, valueInArray, getMean, getVariance, getStdDeviationWV, getSmallestDivisor, getGreatestDivisor, growthFormula, decayFormula, isClass, HStack, HQueue, isPrimitive}
 
