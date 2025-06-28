@@ -26,4 +26,4 @@
 ### Revision for the last update
 
 # [1.1.9] Jun 28 2025
-### -Fixed bug occuring inside of copyfile (```Serverutils.js```) causing erors to be thrown when copying a file that has no file extension <br><br>-Added many new Functions, Data structures and Classes to ```Utils.js```.<br><br>- Added new methods to ```ServerUtils.js```.
+### -Fixed bug occuring inside of copyfile (```Serverutils.js```) causing errors to be thrown when copying a file that has no file extension <br><br>-Added many new Functions, Data structures and Classes to ```Utils.js```.<br><br>- Added new methods to ```ServerUtils.js```.
