@@ -1421,7 +1421,7 @@ export function getGCF(list1 , ...list2){
     if(!Array.isArray(list1)) throw new Error("List must be an array")
     list1 = list1.filter(v => Number.isInteger(v))
     list2 = list2.filter(v => Number.isInteger(v))
-    let full_list = Utils.joinArrs(list1, list2).sort((a,b) => a - b)
+    let full_list = joinArrs(list1, list2).sort((a,b) => a - b)
 
     for(let i = full_list[0]; i > 0; i--){
         if(full_list.every(v => Number.isInteger(v / i))) return i
@@ -1439,7 +1439,7 @@ export function applyGCF(list1 , ...list2){
 if(!Array.isArray(list1)) throw new Error("List must be an array")
     list1 = list1.filter(v => Number.isInteger(v))
     list2 = list2.filter(v => Number.isInteger(v))
-    return Utils.joinArrs(list1, list2).map((v, i, a) => (v / getGCF(a)))
+    return joinArrs(list1, list2).map((v, i, a) => (v / getGCF(a)))
 }
 
 /**
@@ -2065,19 +2065,6 @@ export class Rectangle{
     }
 }
 
-/**
- * handles a client request date, if it is not in a json format it will throw na error.
- * @param {http.IncomingMessage} req 
- * @returns {{} | null}
- */
-export async function handleClientRequestData(req){
-    
-    try {
-        return await Server_Utils.handleClientData(req)
-    } catch (error) {
-        return null
-    }
-}
 
 /**
  * sorts through an array of strings by comparing them one by one againt each other until the array is sorted.
@@ -2107,7 +2094,7 @@ export function bubble_sort_strings(arr, ascending = false){
         return stringToUniqueNumber(v)
     })
     //we then sort the array with bubble sort and rematch all values based on the character code total. 
-    arr = Utils.applyGCF(arr)
+    arr = applyGCF(arr)
 
 
 
@@ -2133,8 +2120,145 @@ export function bubble_sort_strings(arr, ascending = false){
  */
 function stringToUniqueNumber(subject){
     if(typeof subject != "string") throw new Error("subject must be a string")
-    return Utils.applyGCF(Utils.stringToArray(subject).map((p, m) => (p.charCodeAt(0) * ((m == 0 ) ? 1 : m )))).reduce((acc,curr) => acc += curr, 0)
+    return applyGCF(stringToArray(subject).map((p, m) => (p.charCodeAt(0) * ((m == 0 ) ? 1 : m )))).reduce((acc,curr) => acc += curr, 0)
 }
+
+
+/**
+ * converts a number into a word
+ * @author Heaven Williams
+ * @param {number | bigint} subject 
+ * @returns {string}
+ */
+export function numberToWord(subject){
+    if(typeof subject != "bigint" && typeof subject != "number") throw new Error("number must be a big int or number") 
+    if(typeof subject != "bigint") subject = BigInt(subject)
+    
+    
+    const subject_length = subject.toString().length
+
+    const groups = Math.ceil(subject_length / 3)
+
+    let word = "" 
+
+    for(let i = (subject_length); i > 0; i--){
+        let numb = ""
+    
+        //keeps track of which group place this number belongs to, e.g, hundreds, thousands etc
+        let group = Math.ceil(i / 3)
+
+        //keeps track which place this number has in its group, e.g, hundreds, tens, ones.
+        let place = ((i % 3) == 0) ? 3 : (i % 3)
+
+        //keeps track of which part of number we are on.
+        const sample = Number.parseInt((stringToArray(subject.toString()).reverse())[i - 1])
+        const next_sample = Number.parseInt((stringToArray(subject.toString()).reverse())[i - 2])
+        const last_sample = Number.parseInt((stringToArray(subject.toString()).reverse())[i - 3])
+
+        
+
+        const next_sample_is_zero = (next_sample == 0)
+        const last_sample_is_zero = (last_sample == 0)
+    
+        if(sample != 0){
+            if((place == 3)){
+                numb += getSpecialOnesCase(sample) + " hundred" + (((last_sample_is_zero && groups > 1) ? " " + getSpecialPlaceCase(group) : ""))
+        }else if(place == 2){
+            numb += (((sample == 1) && !next_sample_is_zero) ? (getSpecialTeensCase(next_sample)) : (next_sample_is_zero && group > 1) ? (getSpecialTensCase(sample) + ((group > 1) ? " "  + getSpecialPlaceCase(group) : "")): (getSpecialTensCase(sample)))
+            if(((sample == 1))) i--;
+        }else{
+            numb += (getSpecialOnesCase(sample)) + ((group > 1) ? " "  + getSpecialPlaceCase(group) : "")
+        }
+
+        }else if(sample == 0 && group == 1 && subject_length == 1){
+            numb = "zero"
+        }
+    
+        word += (numb.trim() != "") ? (numb + " ") : ""
+    }
+
+    return word
+}
+
+export function getSpecialOnesCase(key){
+    return ([
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine"
+    ])[key - 1]
+}
+
+export function getSpecialTeensCase(key){
+    return ([
+        "eleven",
+        "twelve",
+        "thirteen",
+        "fourteen",
+        "fifteen",
+        "sixteen",
+        "seventeen",
+        "eighteen",
+        "nineteen"
+    ])[key - 1]
+}
+
+export function getSpecialTensCase(key){
+    return ([
+        "ten",
+        "twenty",
+        "thirty",
+        "fourty",
+        "fifty",
+        "sixty",
+        "seventy",
+        "eighty",
+        "ninety"
+    ])[key - 1]
+}
+
+export function getSpecialPlaceCase(key){
+    return ([
+  "hundred",
+  "thousand",
+  "million",
+  "billion",
+  "trillion",
+  "quadrillion",
+  "quintillion",
+  "sextillion",
+  "septillion",
+  "octillion",
+  "nonillion",
+  "decillion",
+  "undecillion",
+  "duodecillion",
+  "tredecillion",
+  "quattuordecillion",
+  "quindecillion",
+  "sexdecillion",
+  "septendecillion",
+  "octodecillion",
+  "novemdecillion",
+  "vigintillion",
+  "centillion"
+]
+)[key - 1]
+}
+
+
+
+
+
+
+
+
+
 
 export {asciiRange, generateRandomArr, generateRandomMixedString, generateRandomNumber,generateRandomString,return_sum, getDate, INode, INodeList, charCodeArrToChar, secondsToString,indexArrN, joinArrs,decimalToBinary, decArrToBinArr,arraysHaveSameContent, multipleArraysHaveSameContent,countOccurences, joinArrayOfArrays, InstanceWrapper, stringToArray, stringToByte, JSONToByte, anyToByte, byteToChar,bytesToString,byteArrToChars,  arrToBytes, arrayToNumArray, viewToArr, valueInArray, getMean, getVariance, getStdDeviationWV, getSmallestDivisor, getGreatestDivisor, growthFormula, decayFormula, isClass, HStack, HQueue, isPrimitive}
 
