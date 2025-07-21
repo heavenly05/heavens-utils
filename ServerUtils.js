@@ -3,7 +3,27 @@ import Path from "node:path"
 import * as fsp from "node:fs/promises"
 
 
+/**
+ * 
+ * @param {ReadableStream<Uint8Array<ArrayBufferLike>>} body 
+ * @returns {string}
+ */
+export async function getResponseBody(body){
+    let data = []
 
+    const reader = body.getReader()
+
+    let read_obj = reader.read()
+    data = joinArrs(data, charCodeArrToChar(Array.from((await read_obj).value)))
+
+
+    while(!(await read_obj).done){
+        data = joinArrs(data, charCodeArrToChar(Array.from((await read_obj).value)))
+        read_obj = reader.read()
+    }
+
+    return arrToString(data)
+}
 class InputManager {
     constructor() {
         throw new Error("Input Manager cannot be initialized as it is a Static class.");
@@ -396,12 +416,14 @@ function validateBaseName(name, dir_path, isDir ){
     if(!isDir){
         //first check to make sure the gooner didnt give us a fake file name
         //ensure we only get the filename and not an entre path
-        if(!isProperFileName(name)) throw new Error("name is not a proper file name. Ensure it has an file extension.")
+        let paste_file_ext = true
+        if(!isProperFileName(name)) paste_file_ext  = false;
         
         
         //temporarily seperate the file name and its extension
-            const file_ext = getFileExtension(name)
-            const file_name = removeFileExtension(name)
+
+            const file_ext = (paste_file_ext) ? getFileExtension(name) : ""
+            const file_name = (paste_file_ext) ? removeFileExtension(name) : name
             name = `${file_name}${file_ext}`
             let i = 0
             while(true){
@@ -700,6 +722,7 @@ function copyDirectory(from, to, sub_dir_name){
         if(!isDirectory(to)) throw new Error("'to' is not a Directory")
     }
 
+
     // console.log("everything will be placed in : " + to)
 
     //create queues, these are where the new folder paths and file pathswith the copies will be stored temporarily
@@ -707,7 +730,7 @@ function copyDirectory(from, to, sub_dir_name){
     let dir_queue = [to]
     let file_queue = []
 
-    //assign a task to all directories inside the from path, making them append their path name (relative to their parent) to the 'to' path and makes them do the smae for their files but sends over the original file path as well to aid in the process
+    //assign a task to all directories inside the from path, making them append their path name (relative to their parent) to the 'to' path and makes them do the same for their files but sends over the original file path as well to aid in the process
     RootDir.assignTask((v) => {
         
         if(v instanceof HChildDirectory){
@@ -733,6 +756,20 @@ function copyDirectory(from, to, sub_dir_name){
 
 }
 
+
+/**
+ * handles a client request date, if it is not in a json format it will throw na error.
+ * @param {http.IncomingMessage} req 
+ * @returns {{} | null}
+ */
+async function handleClientRequestData(req){
+    
+    try {
+        return await Server_Utils.handleClientData(req)
+    } catch (error) {
+        return null
+    }
+}
 
 
 
